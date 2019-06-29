@@ -19,9 +19,17 @@ router.post('/', function(req, res, next){
             res.setHeader(...defaultHeader);
             res.status(200).send({ "message": favorite.location + " has been added to favorites" });
           })
+          .catch( error => {
+            res.setHeader(...defaultHeader);
+            res.status(500).send({error});
+          })
 
       }
     })
 });
+
+router.delete('/', function(req, res, next){
+
+})
 
 module.exports = router;
