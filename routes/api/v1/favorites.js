@@ -53,4 +53,28 @@ router.delete('/', function(req, res, next){
     })
 });
 
+router.get('/', function(req, res, next){
+  User.findOne({
+    where: {api_key: req.body.api_key}
+  })
+    .then( user => {
+      // console.log(user.id);
+      if (user === null){
+        res.setHeader(...defaultHeader);
+        res.status(500).send({ "error": "invalid api_key" });
+      } else {
+        Favorite.findAll({where:{UserId: user.id}})
+          .then( favorites => {
+            res.setHeader(...defaultHeader);
+            res.status(200).send(JSON.stringify(favorites));
+          })
+
+      }
+    })
+    .catch( error => {
+      res.setHeader(...defaultHeader);
+      res.status(500).send({error});
+    })
+});
+
 module.exports = router;
