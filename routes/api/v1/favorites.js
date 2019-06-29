@@ -29,7 +29,28 @@ router.post('/', function(req, res, next){
 });
 
 router.delete('/', function(req, res, next){
-
-})
+  User.findOne({where: {api_key: req.body.api_key}})
+    .then( user => {
+      if (user === null){
+        res.setHeader(...defaultHeader);
+        res.status(500).send({ "error": "invalid api_key" });
+      } else {
+        Favorite.destroy({
+          where:{
+            location: req.body.location,
+            UserId: parseInt(user.id)
+          }
+        })
+          .then( favorite => {
+            res.setHeader(...defaultHeader);
+            res.status(204).send({ "message": req.body.location + " deleted"});
+          })
+          .catch( error => {
+            res.setHeader(...defaultHeader);
+            res.status(500).send({error});
+          })
+      }
+    })
+});
 
 module.exports = router;
