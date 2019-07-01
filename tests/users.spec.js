@@ -16,26 +16,50 @@ describe('api', () => {
   });
 
   describe('Test user creation', () => {
+    test('with matching passwords, returns api key', () =>{
+      let body = {
+        "email": "test4@example.com",
+        "password": "password",
+        "password_confirmation": "password"
+      }
 
+      return request(app).post("/api/v1/users").send(body).then(response =>{
+        //eval(pry.it)
+        expect(response.statusCode).toBe(201);
+        expect(response.body).toHaveProperty('api_key');
+        // console.log(response);
+      })
+    })
+
+    test('withOUT matching passwords, returns error', () =>{
+      let body = {
+        "email": "test4@example.com",
+        "password": "password",
+        "password_confirmation": "password2"
+      }
+
+      return request(app).post("/api/v1/users").send(body).then(response =>{
+        //eval(pry.it)
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toHaveProperty("error", "passwords do not match");
+        // console.log(response);
+      })
+    })
   })
+
+  // describe('Test the root path', () => {
+  //   test('should return a 200', () => {
+  //     return request(app).get("/").then(response => {
+  //       expect(response.statusCode).toBe(200)
+  //     })
+  //   });
+  // });
+
   describe('Test the root path', () => {
     test('should return a 200', () => {
-      // eval(pry.it)
-      console.log("LOOK HERE " + typeof(User));
-      User.create({email:"this@example.com", password_digest:"ok", api_key: "abcd"})
-      .then(user => {
-        console.log(JSON.stringify(user));
-        this.findAll().then(games => { console.log(JSON.stringify(games))})
-      });
-
-      setTimeout(printNotification(), 1000)
-
-      function printNotification() {
-        console.log("str")
-      }
       return request(app).get("/").then(response => {
         expect(response.statusCode).toBe(200);
-      })
+      });
     });
   });
 });

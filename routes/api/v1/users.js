@@ -11,7 +11,7 @@ const createApiKey = function(){
 
 router.post('/', function (req, res, next){
   if ( req.body.password != req.body.password_confirmation){
-    responses.error(res, {"error":"passwords do not match"});
+    responses.error(res, "passwords do not match");
   } else {
     let api_key = createApiKey();
 
