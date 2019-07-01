@@ -2,7 +2,8 @@ var express = require("express");
 var router = express.Router();
 var User = require('../../../models').User;
 var bcrypt = require('bcrypt');
-var defaultHeader = ["Content-Type", "application/json"]
+var defaultHeader = ["Content-Type", "application/json"];
+var responses = require('../../../helpers/responses');
 
 const createApiKey = function(){
   return Math.random().toString(36).substring(2);
@@ -10,8 +11,7 @@ const createApiKey = function(){
 
 router.post('/', function (req, res, next){
   if ( req.body.password != req.body.password_confirmation){
-    res.setHeader(...defaultHeader);
-    res.status(500).send({ "error": "passwords do not match" });
+    responses.error(res, {"error":"passwords do not match"});
   } else {
     let api_key = createApiKey();
 
@@ -22,14 +22,8 @@ router.post('/', function (req, res, next){
         password_digest: hash,
         api_key: api_key
       })
-      .then( (user) => {
-        res.setHeader(...defaultHeader);
-        res.status(201).send(JSON.stringify({api_key: user.api_key}));
-      })
-      .catch( error => {
-        res.setHeader(...defaultHeader);
-        res.status(500).send({error});
-      })
+      .then( (user) => responses.ok(res, 201, {api_key: user.api_key}) )
+      .catch( error => responses.error(res, error) )
 
     })
 
