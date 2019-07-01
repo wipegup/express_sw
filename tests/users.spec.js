@@ -15,6 +15,37 @@ describe('api', () => {
     shell.exec('npx sequelize db:migrate:undo:all')
   });
 
+  // describe('Test user login', () => {
+  //   test('with correct password, returns api key', () =>{
+  //
+  //     let body = {
+  //       "email": "test4@example.com",
+  //       "password": "password",
+  //       "password_confirmation": "password"
+  //     }
+  //
+  //     let login = {
+  //       "email": "test4@example.com",
+  //       "password": "password"
+  //     }
+  //
+  //     return request(app)
+  //       .post("/api/v1/users")
+  //       .send(body)
+  //       .end(() => {
+  //         request(app)
+  //         .post("/api/v1/sessions")
+  //         .send(login)
+  //         .end(err, response =>{
+  //           expect(response.statusCode).toBe(200);
+  //           expect(response.body).toHaveProperty('api_key');
+  //
+  //         })
+  //       })
+  //     })
+  //   })
+
+
   describe('Test user creation', () => {
     test('with matching passwords, returns api key', () =>{
       let body = {
