@@ -3,6 +3,8 @@ var router = express.Router();
 var Favorite = require('../../../models').Favorite;
 var User = require('../../../models').User;
 var defaultHeader = ["Content-Type", "application/json"]
+var services = require('../../../services');
+
 
 router.post('/', function(req, res, next){
   User.findOne({where: {api_key: req.body.api_key}})
@@ -55,20 +57,30 @@ router.delete('/', function(req, res, next){
 
 router.get('/', function(req, res, next){
   User.findOne({
-    where: {api_key: req.body.api_key}
+    where: {api_key: req.body.api_key},
+    // include: [
+    //   {
+    //     model: Favorite,
+    //     as: 'favorites'
+    //   }
+    // ]
   })
     .then( user => {
-      // console.log(user.id);
+      // console.log(user.favorites);
       if (user === null){
         res.setHeader(...defaultHeader);
         res.status(500).send({ "error": "invalid api_key" });
       } else {
         Favorite.findAll({where:{UserId: user.id}})
           .then( favorites => {
-            res.setHeader(...defaultHeader);
-            res.status(200).send(JSON.stringify(favorites));
-          })
-
+            Promise.all(
+              favorites.map( (fav) => services.forecast(fav.location)))
+            .then( favsWeather => {
+              res.setHeader(...defaultHeader);
+              res.status(200).send(JSON.stringify(favsWeather));
+            })
+              }
+            )
       }
     })
     .catch( error => {
